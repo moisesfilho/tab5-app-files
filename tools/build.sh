@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # build.sh - Compila e empacota o app Arquivos para Tab5 OS
-set(set -euo pipefail)
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"

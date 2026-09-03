@@ -6,7 +6,7 @@
   "description": "Gerenciador e explorador de arquivos do cartão microSD com suporte a navegação por diretórios.",
   "entry": "app.wasm",
   "icon_symbol": "LV_SYMBOL_DIRECTORY",
-  "icon_bg_color": "#0EA5E9",
+  "icon_bg_color": "#14B8A6",
   "file_associations": [],
   "permissions": [
     "storage.readwrite"

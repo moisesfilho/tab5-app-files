@@ -1,7 +1,7 @@
 {
   "id": "com.tab5.files",
   "name": "Arquivos",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": "Tab5 OS Team",
   "description": "Gerenciador e explorador de arquivos do cartão microSD com suporte a navegação por diretórios.",
   "entry": "app.wasm",

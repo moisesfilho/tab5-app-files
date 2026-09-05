@@ -14,7 +14,10 @@ mkdir -p "${DIST_DIR}"
 if [ -x "${WASI_CLANG}" ] && [ -f "${APP_DIR}/src/main.c" ]; then
     echo "[INFO] Compilando WebAssembly com wasi-sdk clang..."
     "${WASI_CLANG}" -O2 -I"${SDK_DIR}/include" \
-        -Wl,--export=main -Wl,--export=app_main -Wl,--allow-undefined \
+        -Wl,--export=main -Wl,--export=app_main \
+        -Wl,--export=tab5_app_on_ui_event -Wl,--export=on_ui_event \
+        -Wl,--export=tab5_app_on_theme_changed -Wl,--export=on_theme_changed \
+        -Wl,--allow-undefined \
         -o "${APP_DIR}/app.wasm" "${APP_DIR}/src/main.c"
 elif [ ! -f "${APP_DIR}/app.wasm" ]; then
     echo "[WARN] wasi-sdk nao encontrado, gerando dummy wasm..."

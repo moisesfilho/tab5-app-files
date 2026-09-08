@@ -143,7 +143,23 @@ static void on_item_click(int32_t idx)
     if (entry->is_dir) {
         load_directory(full_path);
     } else {
-        tab5_file_assoc_open(full_path);
+        char open_log[384];
+        snprintf(open_log, sizeof(open_log),
+                 "Abrindo arquivo por associacao: caminho=%s", full_path);
+        tab5_system_log(2, "tab5_files", open_log);
+
+        tab5_err_t ret = tab5_file_assoc_open(full_path);
+        snprintf(open_log, sizeof(open_log),
+                 "Resultado associacao: caminho=%s ret=%d (%s)", full_path,
+                 (int)ret, ret == TAB5_OK ? "sucesso" : "falha");
+        tab5_system_log(2, "tab5_files", open_log);
+
+        if (ret != TAB5_OK) {
+            snprintf(open_log, sizeof(open_log),
+                     "Falha ao abrir associacao: caminho=%s ret=%d", full_path,
+                     (int)ret);
+            tab5_system_log(0, "tab5_files", open_log);
+        }
     }
 }
 
@@ -243,90 +259,35 @@ static void render_content(void)
             s_item_count++;
         }
     } else {
-        tab5_ui_obj_set_flex_flow(s_container, TAB5_UI_FLEX_FLOW_COLUMN);
-        tab5_ui_obj_set_scrollable(s_container, true);
-        tab5_ui_obj_set_pad(s_container, 8);
-        tab5_ui_obj_set_gap(s_container, 4);
+        tab5_ui_obj_set_scrollable(s_container, false);
+        tab5_ui_obj_set_pad(s_container, 0);
+        tab5_ui_obj_set_gap(s_container, 0);
+
+        tab5_ui_obj_t list = tab5_ui_list_create(s_container);
+        tab5_ui_obj_set_scrollable(list, true);
+        tab5_ui_obj_set_size(list, TAB5_UI_PCT(100), 1280 - 104);
+        tab5_ui_obj_set_style_border(list, 0, 0);
 
         if (has_parent) {
-            tab5_ui_obj_t item = tab5_ui_container_create(s_container);
-            tab5_ui_obj_set_size(item, TAB5_UI_PCT(100), 60);
-            tab5_ui_obj_set_scrollable(item, false);
-            tab5_ui_obj_set_style_bg(item, pal_surface, 255);
-            tab5_ui_obj_set_style_border(item, pal_border, 1);
-            tab5_ui_obj_set_style_radius(item, 8);
-            tab5_ui_obj_set_pad(item, 4);
-            tab5_ui_obj_set_clickable(item, true);
-            tab5_ui_obj_set_flex_flow(item, TAB5_UI_FLEX_FLOW_ROW);
-            tab5_ui_obj_set_gap(item, 8);
-
-            tab5_ui_obj_t icon = tab5_ui_label_create(item, LV_SYMBOL_LEFT);
-            tab5_ui_obj_set_scrollable(icon, false);
-            tab5_ui_obj_set_clickable(icon, false);
-            tab5_ui_obj_set_style_text_size(icon, 28);
-            tab5_ui_obj_set_style_text_color(icon, pal_accent, 255);
-
-            tab5_ui_obj_t name = tab5_ui_label_create(item, "..");
-            tab5_ui_obj_set_scrollable(name, false);
-            tab5_ui_obj_set_clickable(name, false);
-            tab5_ui_label_set_wrap(name, false);
-            tab5_ui_obj_set_flex_grow(name, 1);
-            tab5_ui_obj_set_style_text_color(name, pal_text, 255);
-
-            s_item_handles[s_item_count] = item;
+            tab5_ui_obj_t btn = tab5_ui_list_add_btn(list, LV_SYMBOL_LEFT, "..");
+            s_item_handles[s_item_count] = btn;
             s_item_entry_idx[s_item_count] = -1;
             s_item_count++;
         }
 
         for (uint32_t i = 0; i < s_entry_count && s_item_count < MAX_ENTRIES; i++) {
             bool is_dir = s_entries[i].is_dir != 0;
-            tab5_ui_obj_t item = tab5_ui_container_create(s_container);
-            tab5_ui_obj_set_size(item, TAB5_UI_PCT(100), 60);
-            tab5_ui_obj_set_scrollable(item, false);
-            tab5_ui_obj_set_style_bg(item, pal_surface, 255);
-            tab5_ui_obj_set_style_border(item, pal_border, 1);
-            tab5_ui_obj_set_style_radius(item, 8);
-            tab5_ui_obj_set_pad(item, 4);
-            tab5_ui_obj_set_clickable(item, true);
-            tab5_ui_obj_set_flex_flow(item, TAB5_UI_FLEX_FLOW_ROW);
-            tab5_ui_obj_set_gap(item, 8);
-
-            tab5_ui_obj_t icon = tab5_ui_label_create(item, is_dir ? LV_SYMBOL_DIRECTORY : LV_SYMBOL_FILE);
-            tab5_ui_obj_set_scrollable(icon, false);
-            tab5_ui_obj_set_clickable(icon, false);
-            tab5_ui_obj_set_style_text_size(icon, 28);
-            tab5_ui_obj_set_style_text_color(icon, is_dir ? pal_accent : pal_text_muted, 255);
-
             char size_buf[32];
             format_size(s_entries[i].size, is_dir, size_buf, sizeof(size_buf));
-            char date_buf[32];
-            format_date(s_entries[i].mtime, date_buf, sizeof(date_buf));
-            char details_buf[72];
-            snprintf(details_buf, sizeof(details_buf), "%s  %s", size_buf, date_buf);
+            char line[128];
+            if (is_dir) {
+                snprintf(line, sizeof(line), "%s/", s_entries[i].name);
+            } else {
+                snprintf(line, sizeof(line), "%s  (%s)", s_entries[i].name, size_buf);
+            }
 
-            tab5_ui_obj_t info = tab5_ui_container_create(item);
-            tab5_ui_obj_set_scrollable(info, false);
-            tab5_ui_obj_set_clickable(info, false);
-            tab5_ui_obj_set_pad(info, 0);
-            tab5_ui_obj_set_size(info, TAB5_UI_SIZE_CONTENT, TAB5_UI_PCT(100));
-            tab5_ui_obj_set_flex_flow(info, TAB5_UI_FLEX_FLOW_COLUMN);
-            tab5_ui_obj_set_flex_grow(info, 1);
-
-            tab5_ui_obj_t name = tab5_ui_label_create(info, s_entries[i].name);
-            tab5_ui_obj_set_scrollable(name, false);
-            tab5_ui_obj_set_clickable(name, false);
-            tab5_ui_label_set_wrap(name, false);
-            tab5_ui_obj_set_size(name, TAB5_UI_PCT(100), TAB5_UI_SIZE_CONTENT);
-            tab5_ui_obj_set_style_text_color(name, pal_text, 255);
-
-            tab5_ui_obj_t details = tab5_ui_label_create(info, details_buf);
-            tab5_ui_obj_set_scrollable(details, false);
-            tab5_ui_obj_set_clickable(details, false);
-            tab5_ui_label_set_wrap(details, false);
-            tab5_ui_obj_set_size(details, TAB5_UI_PCT(100), TAB5_UI_SIZE_CONTENT);
-            tab5_ui_obj_set_style_text_color(details, pal_text_muted, 255);
-
-            s_item_handles[s_item_count] = item;
+            tab5_ui_obj_t btn = tab5_ui_list_add_btn(list, is_dir ? LV_SYMBOL_DIRECTORY : LV_SYMBOL_FILE, line);
+            s_item_handles[s_item_count] = btn;
             s_item_entry_idx[s_item_count] = (int)i;
             s_item_count++;
         }
@@ -397,8 +358,8 @@ static void build_files_ui(void)
 
 static void app_init(void)
 {
-    tab5_system_log(2, "tab5_files", "Aplicativo Arquivos desacoplado iniciado");
-    tab5_ui_app_bar_set_title("Arquivos");
+    tab5_system_log(2, "tab5_files", "Arquivos v1.0.8 iniciado");
+    tab5_ui_app_bar_set_title("Arquivos [v1.0.8]");
 
     uint8_t hidden = 0;
     if (tab5_nvs_get_u8(NVS_NS, NVS_KEY_HIDDEN, &hidden) == TAB5_OK) {

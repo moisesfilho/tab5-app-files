@@ -17,7 +17,9 @@ Aplicativo Gerenciador e Explorador de Arquivos para o sistema operacional **Tab
 ./tools/build.sh
 ```
 
-O pacote resultante `com.tab5.files.tab5pkg` será criado na pasta `dist/` e pode ser instalado diretamente no dispositivo via Cartão SD (`/sdcard/apps/`) ou embutido na partição de sistema do Tab5 OS.
+O pacote resultante `com.tab5.files.tab5pkg` será criado na pasta `dist/` para uso em builds independentes. Nesse cenário, ele pode ser instalado diretamente no dispositivo via Cartão SD (`/sdcard/apps/`).
+
+Quando o Tab5 OS é compilado com este app, o app Arquivos é incluído automaticamente no build e instalado/carregado como app embutido no sistema. Nesse cenário integrado, não é necessário instalar manualmente o `.tab5pkg`; a instalação manual permanece válida apenas para o fluxo de build independente descrito acima.
 
 ## Licença
 

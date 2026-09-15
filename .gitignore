@@ -3,3 +3,4 @@ app.wasm
 build/
 *.tab5pkg
 .cache/
+tests/__pycache__/

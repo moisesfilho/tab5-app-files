@@ -302,7 +302,7 @@ static void load_directory(const char *path)
     strncpy(s_current_path, path, sizeof(s_current_path) - 1);
     s_current_path[sizeof(s_current_path) - 1] = '\0';
 
-    tab5_dir_entry_t buf[MAX_SCAN_ENTRIES];
+    static tab5_dir_entry_t buf[MAX_SCAN_ENTRIES];
     uint32_t count = 0;
     s_entry_count = 0;
 

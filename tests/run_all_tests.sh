@@ -54,6 +54,9 @@ run_py "Hidden-toggle contract (REQ-001..REQ-005, estático)" \
 run_py "Hidden-toggle filter model (regra D1 real)" \
     "${SCRIPT_DIR}/test_hidden_toggle_filter_model.py"
 
+run_py "Hidden-toggle runtime contract (NVS, worker e ABI)" \
+    "${SCRIPT_DIR}/test_files_hidden_reboot_runtime_contracts.py"
+
 if [ "${RUN_DEVICE}" -eq 1 ]; then
     echo ""
     echo ">>> Running: Device-in-the-loop (serial /dev/ttyACM0)"

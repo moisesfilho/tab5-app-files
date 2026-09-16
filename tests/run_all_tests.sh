@@ -64,7 +64,7 @@ if [ "${RUN_DEVICE}" -eq 1 ]; then
     if [ "${RUN_REBOOT}" -eq 1 ]; then
         EXTRA_ARGS+=(--reboot)
     fi
-    if python3 "${SCRIPT_DIR}/device_test_hidden_toggle_reboot.py" "${EXTRA_ARGS[@]+"${EXTRA_ARGS[@]}"}"; then
+    if python3 "${SCRIPT_DIR}/device_test_hidden_toggle_reboot.py" "${EXTRA_ARGS[@]}"; then
         TOTAL_PASS=$((TOTAL_PASS + 1))
     else
         TOTAL_FAIL=$((TOTAL_FAIL + 1))

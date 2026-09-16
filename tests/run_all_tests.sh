@@ -8,9 +8,13 @@
 #   3. Hidden-toggle filter model (comportamento real da regra D1 extraída)
 #
 # Suíte de dispositivo (opcional, requer /dev/ttyACM0 + bridge):
-#   --device  -> device_test_hidden_toggle_reboot.py (validação serial)
+#   --device  -> device/device_test_hidden_toggle_reboot.py (validação serial)
 #   --reboot  -> adiciona TEST-005 (power-cycle físico; operador pressiona RST
 #                ou define TAB5_REBOOT_CMD). Implica --device.
+#
+# ATENCAO: esta suíte acessa hardware real e nunca deve ser executada
+# automaticamente por agentes de IA. Use --device/--reboot somente após
+# solicitação explícita do usuário.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -64,7 +68,7 @@ if [ "${RUN_DEVICE}" -eq 1 ]; then
     if [ "${RUN_REBOOT}" -eq 1 ]; then
         EXTRA_ARGS+=(--reboot)
     fi
-    if python3 "${SCRIPT_DIR}/device_test_hidden_toggle_reboot.py" "${EXTRA_ARGS[@]}"; then
+    if python3 "${SCRIPT_DIR}/device/device_test_hidden_toggle_reboot.py" "${EXTRA_ARGS[@]}"; then
         TOTAL_PASS=$((TOTAL_PASS + 1))
     else
         TOTAL_FAIL=$((TOTAL_FAIL + 1))

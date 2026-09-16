@@ -5,7 +5,7 @@ ocultos no app Arquivos").  Este módulo valida o lado *do app* (src/main.c e
 manifest.json):
 
   REQ-001/REQ-002 (baseline/crash)  -> evidência vem do device test
-                                       (device_test_hidden_toggle_reboot.py).
+                                       (device/device_test_hidden_toggle_reboot.py).
   REQ-003 (stack WASM buf[512])     -> o buffer de scan de load_directory NÃO
                                        pode ter storage automático (pilha
                                        WASM).  `static` no corpo da função ou

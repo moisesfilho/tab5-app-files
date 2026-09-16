@@ -71,7 +71,7 @@ APP_BAR_BOTTOM = 104
 
 class SerialTransport:
     """Transporte NDJSON sobre o console USB-Serial-JTAG (mesmo padrão do
-    tab5-os/tests/test_serial_bridge_device_validation.py)."""
+             tab5-os/tests/device/test_serial_bridge_device_validation.py)."""
 
     def __init__(self, port, baud):
         import serial  # pyserial
